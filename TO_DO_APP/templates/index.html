@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI To-Do App</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>AI To-Do App</h2>
+
+    <input type="text" id="taskInput" placeholder="Enter task">
+    <button onclick="addTask()">Add</button>
+    <button onclick="aiSuggest()">AI Suggest</button>
+
+    <ul id="taskList"></ul>
+</div>
+
+<script>
+async function loadTasks() {
+    let res = await fetch("/get_tasks");
+    let tasks = await res.json();
+
+    let list = document.getElementById("taskList");
+    list.innerHTML = "";
+
+    tasks.forEach((task, index) => {
+        let li = document.createElement("li");
+        li.innerHTML = `
+            <span onclick="toggleTask(${index})" class="${task.done ? 'done' : ''}">
+                ${task.text}
+            </span>
+            <button onclick="deleteTask(${index})">X</button>
+        `;
+        list.appendChild(li);
+    });
+}
+
+async function addTask() {
+    let input = document.getElementById("taskInput");
+
+    await fetch("/add_task", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({text: input.value})
+    });
+
+    input.value = "";
+    loadTasks();
+}
+
+async function deleteTask(index) {
+    await fetch("/delete_task", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({index})
+    });
+    loadTasks();
+}
+
+async function toggleTask(index) {
+    await fetch("/toggle_task", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({index})
+    });
+    loadTasks();
+}
+
+async function aiSuggest() {
+    let res = await fetch("/ai_suggest");
+    let data = await res.json();
+    document.getElementById("taskInput").value = data.task;
+}
+
+loadTasks();
+</script>
+
+</body>
+</html>
