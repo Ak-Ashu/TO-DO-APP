@@ -1,5 +1,4 @@
-# task01-AshishKumar
-## AI TO-DO APP
+# AI TO-DO APP
 
 A modern and interactive To-Do List web application built using Flask, HTML, CSS, and JavaScript with AI-assisted development. This project demonstrates core backend engineering concepts such as data management, CRUD operations, API handling, and frontend-backend integration.
 
